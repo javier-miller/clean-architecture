@@ -92,6 +92,13 @@ steps:
       -p:PackageVersion=$(PackageVersion)
       -o $(Build.ArtifactStagingDirectory)/nupkgs
 
+- powershell: |
+    Write-Host "Searching for nupkg files..."
+    Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse -Filter *.nupkg | ForEach-Object { $_.FullName }
+    Write-Host "Searching for snupkg files..."
+    Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse -Filter *.snupkg | ForEach-Object { $_.FullName }
+  displayName: 'Diagnostics: list created packages'
+
 # Push al feed interno
 - task: NuGetCommand@2
   displayName: 'Push packages to Azure Artifacts'
