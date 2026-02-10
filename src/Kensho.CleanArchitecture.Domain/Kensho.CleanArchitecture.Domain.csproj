@@ -6,6 +6,7 @@
 		<Nullable>enable</Nullable>
 		<IsPackable>true</IsPackable>
 		<Title>Clean Architecture Domain</Title>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 	<ItemGroup>
