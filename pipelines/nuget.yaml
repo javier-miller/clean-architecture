@@ -104,7 +104,7 @@ steps:
   displayName: 'Push packages to Azure Artifacts'
   inputs:
     command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/nupkgs/*.nupkg'
+    packagesToPush: '$(Build.SourcesDirectory)\src\**\bin\$(BuildConfiguration)\*.nupkg'
     nuGetFeedType: 'internal'
     publishVstsFeed: '$(VstsFeed)'
     allowPackageConflicts: false
@@ -113,6 +113,6 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish build artifacts (nupkgs)'
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/nupkgs'
+    PathtoPublish: '$(Build.SourcesDirectory)\src'
     ArtifactName: 'nupkgs'
     publishLocation: 'Container'
