@@ -13,13 +13,11 @@ pool:
 
 variables:
   BuildConfiguration: 'Release'
+  VstsFeed: 'javiermillervelasco'
 
   # Versionado pre-estable: 0.<minor>.<BuildId>
   PreStableMajor: '0'
   PackageVersion: '$(PreStableMajor).${{ parameters.minorVersion }}.$(Build.BuildId)'
-
-  # Feed Azure Artifacts (Project/Feed)
-  VstsFeed: 'javiermillervelasco/javiermillervelasco'
 
   # Rutas a los 3 proyectos
   DomainProject: 'src/Kensho.CleanArchitecture.Domain/Kensho.CleanArchitecture.Domain.csproj'
