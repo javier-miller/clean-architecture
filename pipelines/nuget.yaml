@@ -98,14 +98,12 @@ steps:
   displayName: 'Diagnostics: list created packages'
 
 # Push al feed interno
-- task: NuGetCommand@2
-  displayName: 'Push packages to Azure Artifacts'
+- task: DotNetCoreCLI@2
+  displayName: 'Push packages to Azure Artifacts (dotnet)'
   inputs:
     command: 'push'
-    packagesToPush: '$(Build.SourcesDirectory)\src\**\bin\$(BuildConfiguration)\*.nupkg'
-    nuGetFeedType: 'internal'
     publishVstsFeed: '$(VstsFeed)'
-    allowPackageConflicts: false
+    searchPatternPush: '$(Build.SourcesDirectory)\src\**\bin\$(BuildConfiguration)\*.nupkg'
 
 # (Opcional) Artefacto del build
 - task: PublishBuildArtifacts@1
