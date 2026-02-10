@@ -1,0 +1,111 @@
+# Pipeline SOLO manual
+trigger: none
+pr: none
+
+parameters:
+- name: minorVersion
+  displayName: 'Minor version (para 0.minor.patch)'
+  type: number
+  default: 1
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  BuildConfiguration: 'Release'
+
+  # Versionado pre-estable: 0.<minor>.<BuildId>
+  PreStableMajor: '0'
+  PackageVersion: '$(PreStableMajor).${{ parameters.minorVersion }}.$(Build.BuildId)'
+
+  # Feed Azure Artifacts (Project/Feed)
+  VstsFeed: 'javiermillervelasco/javiermillervelasco'
+
+  # Rutas a los 3 proyectos
+  DomainProject: 'src/Kensho.CleanArchitecture.Domain/Kensho.CleanArchitecture.Domain.csproj'
+  ApplicationProject: 'src/Kensho.CleanArchitecture.Application/Kensho.CleanArchitecture.Application.csproj'
+  InfrastructureProject: 'src/Kensho.CleanArchitecture.Infrastructure/Kensho.CleanArchitecture.Infrastructure.csproj'
+
+steps:
+- checkout: self
+  clean: true
+
+# .NET 10
+- task: UseDotNet@2
+  displayName: 'Use .NET SDK 10.x'
+  inputs:
+    packageType: 'sdk'
+    version: '10.x'
+
+- task: NuGetAuthenticate@1
+  displayName: 'Authenticate with Azure Artifacts'
+
+- script: dotnet --info
+  displayName: 'Show dotnet info'
+
+- script: dotnet restore
+  displayName: 'Restore'
+
+- script: dotnet build -c $(BuildConfiguration) --no-restore
+  displayName: 'Build'
+
+- script: dotnet test -c $(BuildConfiguration) --no-build
+  displayName: 'Test'
+
+# Pack: 3 paquetes
+- task: DotNetCoreCLI@2
+  displayName: 'Pack Domain'
+  inputs:
+    command: 'pack'
+    packagesToPack: '$(DomainProject)'
+    configuration: '$(BuildConfiguration)'
+    nobuild: true
+    includesymbols: true
+    versioningScheme: 'off'
+    arguments: >
+      -p:PackageVersion=$(PackageVersion)
+      -o $(Build.ArtifactStagingDirectory)/nupkgs
+
+- task: DotNetCoreCLI@2
+  displayName: 'Pack Application'
+  inputs:
+    command: 'pack'
+    packagesToPack: '$(ApplicationProject)'
+    configuration: '$(BuildConfiguration)'
+    nobuild: true
+    includesymbols: true
+    versioningScheme: 'off'
+    arguments: >
+      -p:PackageVersion=$(PackageVersion)
+      -o $(Build.ArtifactStagingDirectory)/nupkgs
+
+- task: DotNetCoreCLI@2
+  displayName: 'Pack Infrastructure'
+  inputs:
+    command: 'pack'
+    packagesToPack: '$(InfrastructureProject)'
+    configuration: '$(BuildConfiguration)'
+    nobuild: true
+    includesymbols: true
+    versioningScheme: 'off'
+    arguments: >
+      -p:PackageVersion=$(PackageVersion)
+      -o $(Build.ArtifactStagingDirectory)/nupkgs
+
+# Push al feed interno
+- task: NuGetCommand@2
+  displayName: 'Push packages to Azure Artifacts'
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/nupkgs/*.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: '$(VstsFeed)'
+    allowPackageConflicts: false
+
+# (Opcional) Artefacto del build
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish build artifacts (nupkgs)'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/nupkgs'
+    ArtifactName: 'nupkgs'
+    publishLocation: 'Container'
