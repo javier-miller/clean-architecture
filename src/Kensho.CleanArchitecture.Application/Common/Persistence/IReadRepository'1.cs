@@ -15,47 +15,47 @@ public interface IReadRepository<TEntity> : IRepository
     /// Gets all asynchronous.
     /// </summary>
     /// <returns></returns>
-    ValueTask<IEnumerable<TEntity>> GetAllAsync();
+    ValueTask<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets all asynchronous.
     /// </summary>
     /// <param name="specification">The specification.</param>
     /// <returns></returns>
-    ValueTask<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity> specification);
+    ValueTask<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets all asynchronous.
     /// </summary>
     /// <param name="predicate">The predicate.</param>
     /// <returns></returns>
-    ValueTask<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate);
+    ValueTask<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the first or default asynchronous.
     /// </summary>
     /// <param name="predicate">The predicate.</param>
     /// <returns></returns>
-    ValueTask<TEntity?> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
+    ValueTask<TEntity?> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the single asynchronous.
     /// </summary>
     /// <param name="specification">The specification.</param>
     /// <returns></returns>
-    ValueTask<TEntity> GetSingleAsync(ISpecification<TEntity> specification);
+    ValueTask<TEntity> GetSingleAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the single asynchronous.
     /// </summary>
     /// <param name="predicate">The predicate.</param>
     /// <returns></returns>
-    ValueTask<TEntity> GetSingleAsync(Expression<Func<TEntity, bool>> predicate);
+    ValueTask<TEntity> GetSingleAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the by identifier asynchronous.
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns></returns>
-    ValueTask<TEntity?> GetByIdAsync(object id);
+    ValueTask<TEntity?> GetByIdAsync(object id, CancellationToken cancellationToken = default);
 }

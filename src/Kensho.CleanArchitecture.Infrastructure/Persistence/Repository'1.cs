@@ -40,11 +40,11 @@ public class Repository<TDbContext, TEntity> : IRepository<TEntity>
     /// Gets all asynchronous.
     /// </summary>
     /// <returns></returns>
-    public virtual async ValueTask<IEnumerable<TEntity>> GetAllAsync()
+    public virtual async ValueTask<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var query = FormatQuery(_dbSet);
 
-        var result = await query.ToListAsync();
+        var result = await query.ToListAsync(cancellationToken);
 
         return result;
     }
@@ -54,12 +54,12 @@ public class Repository<TDbContext, TEntity> : IRepository<TEntity>
     /// </summary>
     /// <param name="specification">The specification.</param>
     /// <returns></returns>
-    public virtual async ValueTask<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity> specification)
+    public virtual async ValueTask<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default)
     {
         var query = specification.Apply(_dbSet);
         query = FormatQuery(query);
 
-        var result = await query.ToListAsync();
+        var result = await query.ToListAsync(cancellationToken);
 
         return result;
     }
@@ -69,10 +69,10 @@ public class Repository<TDbContext, TEntity> : IRepository<TEntity>
     /// </summary>
     /// <param name="predicate">The predicate.</param>
     /// <returns></returns>
-    public virtual async ValueTask<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate)
+    public virtual async ValueTask<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
     {
         var query = _dbSet.Where(predicate);
-        var result = await FormatQuery(query).ToListAsync();
+        var result = await FormatQuery(query).ToListAsync(cancellationToken);
 
         return result;
     }
@@ -82,12 +82,12 @@ public class Repository<TDbContext, TEntity> : IRepository<TEntity>
     /// </summary>
     /// <param name="specification">The specification.</param>
     /// <returns></returns>
-    public virtual async ValueTask<TEntity> GetSingleAsync(ISpecification<TEntity> specification)
+    public virtual async ValueTask<TEntity> GetSingleAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default)
     {
         var query = specification.Apply(_dbSet);
         query = FormatQuery(query);
 
-        var result = await query.SingleAsync();
+        var result = await query.SingleAsync(cancellationToken);
 
         return result;
     }
@@ -97,11 +97,11 @@ public class Repository<TDbContext, TEntity> : IRepository<TEntity>
     /// </summary>
     /// <param name="predicate">The predicate.</param>
     /// <returns></returns>
-    public virtual async ValueTask<TEntity?> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+    public virtual async ValueTask<TEntity?> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
     {
         var query = _dbSet.Where(predicate);
 
-        var result = await FormatQuery(query).FirstOrDefaultAsync();
+        var result = await FormatQuery(query).FirstOrDefaultAsync(cancellationToken);
 
         return result;
     }
@@ -111,11 +111,11 @@ public class Repository<TDbContext, TEntity> : IRepository<TEntity>
     /// </summary>
     /// <param name="predicate">The predicate.</param>
     /// <returns></returns>
-    public virtual async ValueTask<TEntity> GetSingleAsync(Expression<Func<TEntity, bool>> predicate)
+    public virtual async ValueTask<TEntity> GetSingleAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
     {
         var query = _dbSet.Where(predicate);
 
-        var result = await FormatQuery(query).SingleAsync();
+        var result = await FormatQuery(query).SingleAsync(cancellationToken);
 
         return result;
     }
@@ -125,7 +125,7 @@ public class Repository<TDbContext, TEntity> : IRepository<TEntity>
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns></returns>
-    public virtual async ValueTask<TEntity?> GetByIdAsync(object id)
+    public virtual async ValueTask<TEntity?> GetByIdAsync(object id, CancellationToken cancellationToken = default)
     {
         if (_options.AsNoTracking) _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
@@ -140,9 +140,9 @@ public class Repository<TDbContext, TEntity> : IRepository<TEntity>
     /// </summary>
     /// <param name="entity">The entity.</param>
     /// <returns></returns>
-    public virtual async ValueTask<TEntity> CreateAsync(TEntity entity)
+    public virtual async ValueTask<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        var result = await _dbSet.AddAsync(entity);
+        var result = await _dbSet.AddAsync(entity, cancellationToken);
 
         return result.Entity;
     }

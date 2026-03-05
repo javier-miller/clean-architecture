@@ -58,7 +58,7 @@ public abstract class ApplicationDbContext<TDbContext> : DbContext, IUnitOfWork 
     /// <summary>
     /// Accepts the changes asynchronous.
     /// </summary>
-    public async Task AcceptChangesAsync()
+    public async Task AcceptChangesAsync(CancellationToken cancellationToken = default)
     {
         var domainEvents = ChangeTracker.Entries<IEntity>()
             .Select(entry => entry.Entity.PopDomainEvents())
@@ -66,6 +66,6 @@ public abstract class ApplicationDbContext<TDbContext> : DbContext, IUnitOfWork 
 
         _eventsManager.SubscribeEvents(domainEvents);
 
-        await SaveChangesAsync();
+        await SaveChangesAsync(cancellationToken);
     }
 }

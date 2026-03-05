@@ -9,6 +9,6 @@ public interface IUnitOfWork
     /// Accepts the changes asynchronous.
     /// </summary>
     /// <returns></returns>
-    Task AcceptChangesAsync();
+    Task AcceptChangesAsync(CancellationToken cancellationToken = default);
 }
 

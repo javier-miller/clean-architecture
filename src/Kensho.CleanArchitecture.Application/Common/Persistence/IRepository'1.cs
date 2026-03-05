@@ -10,24 +10,9 @@ namespace Kensho.CleanArchitecture.Application.Common.Persistence;
 public interface IRepository<TEntity> : IReadRepository<TEntity>
     where TEntity : Entity
 {
-    /// <summary>
-    /// Creates the asynchronous.
-    /// </summary>
-    /// <param name="entity">The entity.</param>
-    /// <returns></returns>
-    ValueTask<TEntity> CreateAsync(TEntity entity);
+    ValueTask<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default);
 
-    /// <summary>
-    /// Updates the asynchronous.
-    /// </summary>
-    /// <param name="entity">The entity.</param>
-    /// <returns></returns>
     ValueTask<TEntity> UpdateAsync(TEntity entity);
 
-    /// <summary>
-    /// Removes the asynchronous.
-    /// </summary>
-    /// <param name="entity">The entity.</param>
-    /// <returns></returns>
     ValueTask RemoveAsync(TEntity entity);
 }
