@@ -16,7 +16,7 @@ public class Repository<TDbContext, TEntity> : IRepository<TEntity>
     where TDbContext : DbContext
     where TEntity : Entity
 {
-    protected readonly RepositoryOptions _options;
+    //protected readonly RepositoryOptions _options;
     protected readonly TDbContext _dbContext;
     protected readonly DbSet<TEntity> _dbSet;
 
@@ -26,12 +26,12 @@ public class Repository<TDbContext, TEntity> : IRepository<TEntity>
     /// <param name="dbContext">The database context.</param>
     /// <param name="options">The options.</param>
     /// <exception cref="System.ArgumentNullException"></exception>
-    public Repository(TDbContext dbContext, RepositoryOptions options)
+    public Repository(TDbContext dbContext)
     {
         ArgumentNullException.ThrowIfNull(dbContext);
-        ArgumentNullException.ThrowIfNull(options);
+        //ArgumentNullException.ThrowIfNull(options);
 
-        _options = options;
+        //_options = options;
         _dbContext = dbContext;
         _dbSet = dbContext.Set<TEntity>();
     }
@@ -127,10 +127,10 @@ public class Repository<TDbContext, TEntity> : IRepository<TEntity>
     /// <returns></returns>
     public virtual async ValueTask<TEntity?> GetByIdAsync(object id, CancellationToken cancellationToken = default)
     {
-        if (_options.AsNoTracking) _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        //if (_options.AsNoTracking) _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
         var result = await _dbSet.FindAsync(id);
-        _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
+        //_dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
 
         return result;
     }
@@ -179,8 +179,8 @@ public class Repository<TDbContext, TEntity> : IRepository<TEntity>
     /// <returns></returns>
     protected virtual IQueryable<TEntity> FormatQuery(IQueryable<TEntity> query)
     {
-        if (_options.AsNoTracking)
-            return query.AsNoTracking();
+        //if (_options.AsNoTracking)
+        //    return query.AsNoTracking();
 
         return query;
     }
