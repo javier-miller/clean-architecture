@@ -2,4 +2,5 @@
   <Project Path="src/Kensho.CleanArchitecture.Application/Kensho.CleanArchitecture.Application.csproj" />
   <Project Path="src/Kensho.CleanArchitecture.Domain/Kensho.CleanArchitecture.Domain.csproj" />
   <Project Path="src/Kensho.CleanArchitecture.Infrastructure/Kensho.CleanArchitecture.Infrastructure.csproj" />
+  <Project Path="src/Kensho.CleanArchitecture.Infrastructure.MediatR/Kensho.CleanArchitecture.Infrastructure.MediatR.csproj" />
 </Solution>

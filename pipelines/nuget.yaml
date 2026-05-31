@@ -20,10 +20,11 @@ variables:
   PreStableMajor: '0'
   PackageVersion: '$(PreStableMajor).${{ parameters.minorVersion }}.$(Build.BuildId)'
 
-  # Rutas a los 3 proyectos
+  # Rutas a los 4 proyectos
   DomainProject: 'src/Kensho.CleanArchitecture.Domain/Kensho.CleanArchitecture.Domain.csproj'
   ApplicationProject: 'src/Kensho.CleanArchitecture.Application/Kensho.CleanArchitecture.Application.csproj'
   InfrastructureProject: 'src/Kensho.CleanArchitecture.Infrastructure/Kensho.CleanArchitecture.Infrastructure.csproj'
+  InfrastructureMediatRProject: 'src/Kensho.CleanArchitecture.Infrastructure.MediatR/Kensho.CleanArchitecture.Infrastructure.MediatR.csproj'
 
 steps:
 - checkout: self
@@ -51,7 +52,7 @@ steps:
 - script: dotnet test -c $(BuildConfiguration) --no-build
   displayName: 'Test'
 
-# Pack: 3 paquetes
+# Pack: 4 paquetes
 - task: DotNetCoreCLI@2
   displayName: 'Pack Domain'
   inputs:
@@ -83,6 +84,19 @@ steps:
   inputs:
     command: 'pack'
     packagesToPack: '$(InfrastructureProject)'
+    configuration: '$(BuildConfiguration)'
+    nobuild: true
+    includesymbols: true
+    versioningScheme: 'off'
+    arguments: >
+      -p:PackageVersion=$(PackageVersion)
+      -o $(PackageOutputPath)
+
+- task: DotNetCoreCLI@2
+  displayName: 'Pack Infrastructure.MediatR'
+  inputs:
+    command: 'pack'
+    packagesToPack: '$(InfrastructureMediatRProject)'
     configuration: '$(BuildConfiguration)'
     nobuild: true
     includesymbols: true
