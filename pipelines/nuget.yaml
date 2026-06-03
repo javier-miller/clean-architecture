@@ -46,7 +46,7 @@ steps:
 - script: dotnet restore
   displayName: 'Restore'
 
-- script: dotnet build -c $(BuildConfiguration) --no-restore -p:GeneratePackageOnBuild=false
+- script: dotnet build -c $(BuildConfiguration) --no-restore
   displayName: 'Build'
 
 - script: dotnet test -c $(BuildConfiguration) --no-build
@@ -106,10 +106,16 @@ steps:
       -o $(PackageOutputPath)
 
 - powershell: |
-    Write-Host "Searching for nupkg files..."
-    Get-ChildItem -Path "$(PackageOutputPath)" -Recurse -Filter *.nupkg | ForEach-Object { $_.FullName }
-    Write-Host "Searching for snupkg files..."
-    Get-ChildItem -Path "$(PackageOutputPath)" -Recurse -Filter *.snupkg | ForEach-Object { $_.FullName }
+    Write-Host "Searching for nupkg files in PackageOutputPath..."
+    if (Test-Path "$(PackageOutputPath)") {
+      Get-ChildItem -Path "$(PackageOutputPath)" -Recurse -Filter *.nupkg | ForEach-Object { $_.FullName }
+      Get-ChildItem -Path "$(PackageOutputPath)" -Recurse -Filter *.snupkg | ForEach-Object { $_.FullName }
+    } else {
+      Write-Host "PackageOutputPath does not exist: $(PackageOutputPath)"
+    }
+
+    Write-Host "Searching for nupkg files in src/bin..."
+    Get-ChildItem -Path "$(Build.SourcesDirectory)\src" -Recurse -Filter *.nupkg | ForEach-Object { $_.FullName }
   displayName: 'Diagnostics: list created packages'
 
 # Push al feed interno
@@ -118,12 +124,12 @@ steps:
   inputs:
     command: 'push'
     publishVstsFeed: '$(VstsFeed)'
-    searchPatternPush: '$(PackageOutputPath)/*.nupkg'
+    searchPatternPush: '$(Build.SourcesDirectory)\src\**\bin\$(BuildConfiguration)\*.nupkg'
 
-# (Opcional) Artefacto del build
+# Artefacto del build
 - task: PublishBuildArtifacts@1
   displayName: 'Publish build artifacts (nupkgs)'
   inputs:
-    PathtoPublish: '$(PackageOutputPath)'
+    PathtoPublish: '$(Build.SourcesDirectory)\src'
     ArtifactName: 'nupkgs'
     publishLocation: 'Container'
