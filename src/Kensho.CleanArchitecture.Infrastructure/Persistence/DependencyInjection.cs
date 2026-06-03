@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Kensho.CleanArchitecture.Application.Common.Persistence;
+using Kensho.CleanArchitecture.Domain.Events;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Kensho.CleanArchitecture.Infrastructure.Persistence;
 
@@ -19,9 +21,24 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructureCore<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction)
             where TDbContext : DbContext, IUnitOfWork
     {
+        ArgumentNullException.ThrowIfNull(optionsAction);
+
+        services.AddHttpContextAccessor();
+        services.TryAddScoped<IDomainEventsManager, HttpContextDomainEventsManager>();
+        services.TryAddScoped<IRepositoryFactory, RepositoryFactory>();
+        services.TryAddSingleton<ISpecificationFactory, SpecificationFactory>();
+
         services.AddDbContext<TDbContext>(optionsAction)
-            .AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<TDbContext>())
-            .AddSingleton<ISpecificationFactory, SpecificationFactory>();
+            .AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<TDbContext>());
+
+        services.AddKeyedScoped("readonly", (provider, _) =>
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<TDbContext>();
+            optionsAction(optionsBuilder);
+            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+
+            return ActivatorUtilities.CreateInstance<TDbContext>(provider, optionsBuilder.Options);
+        });
 
         return services;
     }

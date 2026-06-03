@@ -6,15 +6,9 @@
 - Decide whether a background-service-safe domain events manager is needed.
 - Consider whether dispatch should happen after every successful unit of work, through middleware, or explicitly by application code.
 
-## Infrastructure Registration
+## Repository Registration
 
-`AddInfrastructureCore<TDbContext>` currently registers:
-
-- `TDbContext`
-- `IUnitOfWork`
-- `ISpecificationFactory`
-
-It does not register repository factories, repositories, or domain event managers. That may be intentional to keep consumers explicit, but another pass should decide the desired consumer experience.
+Concrete repositories are still registered explicitly through `AddRepository<TService, TImplementation, TEntity, TDbContext>`. Consider whether the package should also expose a default generic repository registration helper for consumers that do not need custom repository types.
 
 ## Specification Pattern
 

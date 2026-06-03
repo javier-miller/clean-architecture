@@ -43,6 +43,20 @@ The old unused `src/Kensho.CleanArchitecture.Domain/SparkyCodeStudios.Core.Domai
 
 `ApplicationDbContext.AcceptChangesAsync` now saves changes first, then pops and queues domain events. This avoids queuing events for changes that fail to persist.
 
+## Infrastructure Registration
+
+`AddInfrastructureCore<TDbContext>` registers:
+
+- default `TDbContext` through EF Core `AddDbContext`;
+- keyed readonly `TDbContext` with key `"readonly"` and `QueryTrackingBehavior.NoTracking`;
+- `IUnitOfWork`;
+- `ISpecificationFactory`;
+- `IRepositoryFactory`;
+- `IHttpContextAccessor`;
+- `IDomainEventsManager`.
+
+Concrete repositories are registered through `AddRepository<TService, TImplementation, TEntity, TDbContext>`, which registers both the normal scoped repository and the keyed `"readonly"` repository used by `RepositoryFactory.GetReadRepository<TRepository>()`.
+
 ## Known Worktree Context
 
 At the time this documentation was written, the current work includes:

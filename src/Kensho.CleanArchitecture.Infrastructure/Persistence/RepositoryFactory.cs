@@ -9,7 +9,7 @@ namespace Kensho.CleanArchitecture.Infrastructure.Persistence;
 /// <seealso cref="IRepositoryFactory" />
 public class RepositoryFactory : IRepositoryFactory
 {
-    private IServiceProvider _serviceProvider;
+    private readonly IServiceProvider _serviceProvider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RepositoryFactory"/> class.

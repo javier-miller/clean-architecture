@@ -1,13 +1,18 @@
-﻿using Kensho.CleanArchitecture.Application.Common.Persistence;
+using Kensho.CleanArchitecture.Application.Common.Persistence;
 using Kensho.CleanArchitecture.Domain;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Kensho.CleanArchitecture.Infrastructure.Persistence;
 
 public static class DbContextExtensions
 {
-    public static IServiceCollection AddSpecificationFactory(this IServiceCollection services) => 
-        services.AddSingleton<ISpecificationFactory, SpecificationFactory>();
+    public static IServiceCollection AddSpecificationFactory(this IServiceCollection services)
+    {
+        services.TryAddSingleton<ISpecificationFactory, SpecificationFactory>();
+
+        return services;
+    }
 
     public static IServiceCollection AddRepository<TService, TImplementation, TEntity, TDbContext>(this IServiceCollection services)
         where TService : class, IRepository<TEntity>
