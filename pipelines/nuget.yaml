@@ -14,7 +14,7 @@ pool:
 variables:
   BuildConfiguration: 'Release'
   VstsFeed: 'javiermillervelasco'
-  PackageOutputPath: '$(Build.DefaultWorkingDirectory)/nupkgs'
+  PackageOutputPath: '$(Build.ArtifactStagingDirectory)/nupkgs'
 
   # Versionado pre-estable: 0.<minor>.<BuildId>
   PreStableMajor: '0'
@@ -107,9 +107,9 @@ steps:
 
 - powershell: |
     Write-Host "Searching for nupkg files..."
-    Get-ChildItem -Path "$(PackageOutputPath)" -Recurse -Filter *.nupkg | ForEach-Object { $_.FullName }
+    Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse -Filter *.nupkg | ForEach-Object { $_.FullName }
     Write-Host "Searching for snupkg files..."
-    Get-ChildItem -Path "$(PackageOutputPath)" -Recurse -Filter *.snupkg | ForEach-Object { $_.FullName }
+    Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse -Filter *.snupkg | ForEach-Object { $_.FullName }
   displayName: 'Diagnostics: list created packages'
 
 # Push al feed interno
@@ -118,7 +118,7 @@ steps:
   inputs:
     command: 'push'
     publishVstsFeed: '$(VstsFeed)'
-    searchPatternPush: '$(PackageOutputPath)/*.nupkg'
+    searchPatternPush: '$(Build.SourcesDirectory)\src\**\bin\$(BuildConfiguration)\*.nupkg'
 
 # (Opcional) Artefacto del build
 - task: PublishBuildArtifacts@1
