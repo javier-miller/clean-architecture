@@ -107,9 +107,9 @@ steps:
 
 - powershell: |
     Write-Host "Searching for nupkg files..."
-    Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse -Filter *.nupkg | ForEach-Object { $_.FullName }
+    Get-ChildItem -Path "$(PackageOutputPath)" -Recurse -Filter *.nupkg | ForEach-Object { $_.FullName }
     Write-Host "Searching for snupkg files..."
-    Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse -Filter *.snupkg | ForEach-Object { $_.FullName }
+    Get-ChildItem -Path "$(PackageOutputPath)" -Recurse -Filter *.snupkg | ForEach-Object { $_.FullName }
   displayName: 'Diagnostics: list created packages'
 
 # Push al feed interno
@@ -118,7 +118,7 @@ steps:
   inputs:
     command: 'push'
     publishVstsFeed: '$(VstsFeed)'
-    searchPatternPush: '$(Build.SourcesDirectory)\src\**\bin\$(BuildConfiguration)\*.nupkg'
+    searchPatternPush: '$(PackageOutputPath)/*.nupkg'
 
 # (Opcional) Artefacto del build
 - task: PublishBuildArtifacts@1
