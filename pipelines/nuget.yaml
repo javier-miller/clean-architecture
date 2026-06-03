@@ -14,7 +14,7 @@ pool:
 variables:
   BuildConfiguration: 'Release'
   VstsFeed: 'javiermillervelasco'
-  PackageOutputPath: '$(Build.ArtifactStagingDirectory)/nupkgs'
+  PackageOutputPath: '$(Build.DefaultWorkingDirectory)/nupkgs'
 
   # Versionado pre-estable: 0.<minor>.<BuildId>
   PreStableMajor: '0'
